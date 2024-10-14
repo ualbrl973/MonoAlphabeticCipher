@@ -6,10 +6,11 @@ import java.util.Map;
 public class FrequencyAnalysisKeyGenerator {
 
     char[] cipherKey;
+    public Map<Character, Integer> cipherFrequency;
 
     public FrequencyAnalysisKeyGenerator(String ciphertext) {
         // Análisis de frecuencias en el texto cifrado
-        Map<Character, Integer> cipherFrequency = FrequencyAnalyzer.analyzeFrequency(ciphertext);
+        cipherFrequency = FrequencyAnalyzer.analyzeFrequency(ciphertext);
         System.out.println(cipherFrequency);
 
         // Ordenamos las frecuencias del texto cifrado

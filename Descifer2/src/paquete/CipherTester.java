@@ -15,6 +15,10 @@ public class CipherTester {
 
     // Objetos creados una sola vez
     private FrequencyAnalysisKeyGenerator initialKeyGenerator;
+    
+    public FrequencyAnalysisKeyGenerator getInitialKeyGenerator() {
+    	return initialKeyGenerator;
+    }
 
     public CipherTester(String ciphertext, int rounds) {
         try {
@@ -42,6 +46,24 @@ public class CipherTester {
         return bestOverallCipherKey;
     }
 
+    //For application progress bar purpose
+    public CipherKey executeTests(java.util.function.Consumer<Integer> progressConsumer) {
+        for (int test = 0; test < rounds; test++) {
+            System.out.println("Executing round " + (test + 1) + "...");
+            CipherKey bestCipherKey = findBestCipherKey();
+
+            // Actualizar la mejor clave global si es necesario
+            updateBestResults(bestCipherKey);
+
+            // Call the consumer to update progress
+            progressConsumer.accept(test + 1); // +1 to show current round
+        }
+
+        System.out.println("Best Overall Fitness: " + bestOverallFitness + " | Best Key: " + bestOverallCipherKey);
+        return bestOverallCipherKey;
+    }
+
+    
     // Método para encontrar la mejor clave en una ronda
     private CipherKey findBestCipherKey() {
         char[] initialKey = initialKeyGenerator.getCypherKey();

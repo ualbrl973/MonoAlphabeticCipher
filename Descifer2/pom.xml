@@ -4,16 +4,22 @@
   <artifactId>Descifer2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <release>22</release>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+ <build>
+  <sourceDirectory>src</sourceDirectory>
+  <resources>
+    <resource>
+      <directory>src/images</directory>
+    </resource>
+  </resources>
+  <plugins>
+    <plugin>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.8.1</version>
+      <configuration>
+        <release>22</release>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 </project>
+
