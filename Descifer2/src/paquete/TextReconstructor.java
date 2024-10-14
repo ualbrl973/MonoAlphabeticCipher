@@ -14,29 +14,37 @@ public class TextReconstructor {
 
     public String reconstruct() {
         List<Integer> punctuationPositions = findPunctuationPositions();
+        List<Integer> numberPositions = findNumberPositions();
         StringBuilder reconstructedText = new StringBuilder();
         int decryptedIndex = 0;
 
         for (int i = 0; i < originalCiphertext.length(); i++) {
             char originalChar = originalCiphertext.charAt(i);
-            // Si el carácter original es un espacio, lo agregamos al texto reconstruido
+            
+            // Add spaces directly
             if (originalChar == ' ') {
                 reconstructedText.append(' ');
-            } else if (punctuationPositions.contains(i) || originalChar == '\'' || originalChar == '\"') {
-                // Si hay un signo de puntuación o comillas en la posición original, lo agregamos
+            } else if (punctuationPositions.contains(i)) {
+                // Add punctuation marks
+                reconstructedText.append(originalChar);
+            } else if (numberPositions.contains(i)) {
+                // Add numbers
                 reconstructedText.append(originalChar);
             } else {
-                // Agregamos el carácter desencriptado solo si hay caracteres restantes
+                // Only add a decrypted character if there are remaining characters
                 if (decryptedIndex < decryptedText.length()) {
                     char decryptedChar = decryptedText.charAt(decryptedIndex);
                     
-                    // Mantener la mayúscula si el carácter original es mayúscula
+                    // Maintain uppercase if the original character is uppercase
                     if (Character.isUpperCase(originalChar)) {
                         reconstructedText.append(Character.toUpperCase(decryptedChar));
                     } else {
                         reconstructedText.append(Character.toLowerCase(decryptedChar));
                     }
                     decryptedIndex++;
+                } else {
+                    // If no more decrypted characters, add the original character
+                    reconstructedText.append(originalChar);
                 }
             }
         }
@@ -48,7 +56,24 @@ public class TextReconstructor {
         List<Integer> positions = new ArrayList<>();
         for (int i = 0; i < originalCiphertext.length(); i++) {
             char c = originalCiphertext.charAt(i);
-            if (c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == ':' || c == '\'' || c == '\"') {
+            // Include common special characters
+            if (c == '.' || c == ',' || c == '!' || c == '?' || c == ';' || c == ':' ||
+                c == '\'' || c == '\"' || c == '’' || c == '-' || c == '_' ||
+                c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}' ||
+                c == '~' || c == '`' || c == '@' || c == '#' || c == '$' || c == '%' ||
+                c == '^' || c == '&' || c == '*' || c == '+' || c == '=' || c == '|' ||
+                c == '\\' || c == '/' || c == '<' || c == '>') {
+                positions.add(i);
+            }
+        }
+        return positions;
+    }
+
+    private List<Integer> findNumberPositions() {
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < originalCiphertext.length(); i++) {
+            char c = originalCiphertext.charAt(i);
+            if (Character.isDigit(c)) {
                 positions.add(i);
             }
         }

@@ -4,14 +4,6 @@
   <artifactId>Descifer2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   
-  <dependencies>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20210307</version> <!-- Asegúrate de usar la última versión -->
-    </dependency>
-  </dependencies>
-  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
