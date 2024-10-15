@@ -182,70 +182,62 @@ public class Application {
 		scrollPane_1.setViewportView(textPaneDesencryptedText);
 		btnDescifer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	textPaneDesencryptedText.setText("");
-                lblNewLabel_FinalKey.setText("");
-                textPaneFrequencies.setText("");
-		    	btnDescifer.setEnabled(false);
-		    	progressBar.setVisible(true);
+		        textPaneDesencryptedText.setText("");
+		        lblNewLabel_FinalKey.setText("");
+		        textPaneFrequencies.setText("");
+		        btnDescifer.setEnabled(false);
+		        progressBar.setVisible(true);
 		        initialCiphertext = textArea_cipherText.getText();
 		        ciphertext = initialCiphertext.toUpperCase().replaceAll("[^A-Z]", "");
 		        int numberOfTests = 25; // Set the number of tests
-		        // Create a SwingWorker to run the tests in the background
-		        SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
-		            private CipherKey bestCipherKey; // Declare bestCipherKey here
 
+		        // Create a new thread to run the tests in the background
+		        Thread cipherThread = new Thread(new Runnable() {
 		            @Override
-		            protected Void doInBackground() throws Exception {
-		                
-		                CipherTester cipherTester = new CipherTester(ciphertext, numberOfTests);
-
-		                // Execute the tests and update progress
-		                bestCipherKey = cipherTester.executeTests(progress -> publish(progress)); // Pass the progress consumer
-
-		                return null;
-		            }
-
-		            @Override
-		            protected void process(java.util.List<Integer> chunks) {
-		                for (int value : chunks) {
-		                    progressBar.setValue((int) ((double) value / numberOfTests * 100)); // Update the progress bar
-		                }
-		            }
-
-		            @Override
-		            protected void done() {
+		            public void run() {
 		                try {
-		                    // Check if bestCipherKey is not null before using it
-		                    if (bestCipherKey != null) {
-		                        String finalBestPlainText = bestCipherKey.decrypt(ciphertext);
-		                        TextReconstructor reconstructor = new TextReconstructor(initialCiphertext, finalBestPlainText);
-		                        reconstructedText = reconstructor.reconstruct();
+		                    CipherTester cipherTester = new CipherTester(ciphertext, numberOfTests);
+		                    bestCipherKey = cipherTester.executeTests(progress -> {
+		                        // Use EventQueue.invokeLater to update the progress bar safely in the UI thread
+		                        EventQueue.invokeLater(() -> {
+		                            progressBar.setValue((int) ((double) progress / numberOfTests * 100)); // Update the progress bar
+		                        });
+		                    });
 
-		                        textPaneDesencryptedText.setText(reconstructedText);
-		                        lblNewLabel_FinalKey.setText(bestCipherKey.toString());
-		                        String frequencies = new CipherTester(ciphertext, numberOfTests).getInitialKeyGenerator().cipherFrequency.toString();
-		                        frequencies = frequencies.substring(1, frequencies.length()-1);
-		                        textPaneFrequencies.setText(frequencies);
-		                    } else {
-		                        // Handle the case where no best key was found
-		                        textPaneDesencryptedText.setText("No valid cipher key found.");
-		                        lblNewLabel_FinalKey.setText("N/A");
-		                        textPaneFrequencies.setText("N/A");
-		                    }
+		                    // When done, update the UI with the results
+		                    EventQueue.invokeLater(() -> {
+		                        if (bestCipherKey != null) {
+		                            String finalBestPlainText = bestCipherKey.decrypt(ciphertext);
+		                            TextReconstructor reconstructor = new TextReconstructor(initialCiphertext, finalBestPlainText);
+		                            reconstructedText = reconstructor.reconstruct();
+
+		                            textPaneDesencryptedText.setText(reconstructedText);
+		                            lblNewLabel_FinalKey.setText(bestCipherKey.toString());
+		                            String frequencies = new CipherTester(ciphertext, numberOfTests).getInitialKeyGenerator().cipherFrequency.toString();
+		                            frequencies = frequencies.substring(1, frequencies.length() - 1);
+		                            textPaneFrequencies.setText(frequencies);
+		                        } else {
+		                            textPaneDesencryptedText.setText("No valid cipher key found.");
+		                            lblNewLabel_FinalKey.setText("N/A");
+		                            textPaneFrequencies.setText("N/A");
+		                        }
+
+		                        progressBar.setValue(100); // Ensure progress bar is complete
+		                        progressBar.setVisible(false);
+		                        progressBar.setValue(0);
+		                        btnDescifer.setEnabled(true);
+		                    });
 		                } catch (Exception ex) {
 		                    ex.printStackTrace();
 		                }
-
-		                progressBar.setValue(100); // Ensure progress bar is complete
-		                progressBar.setVisible(false);
-		                progressBar.setValue(0);
-		                btnDescifer.setEnabled(true);
 		            }
-		        };
+		        });
 
-		        worker.execute(); // Start the SwingWorker
+		        // Start the thread
+		        cipherThread.start();
 		    }
 		});
+
 		
 	
 		

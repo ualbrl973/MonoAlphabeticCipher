@@ -3,6 +3,8 @@ package paquete;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +14,11 @@ public class QuadgramAnalyzer {
 
     public QuadgramAnalyzer(String filePath) throws IOException {
         this.quadgramFrequencies = new HashMap<>();
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        
+        
+        InputStream is = getClass().getResourceAsStream("/english_quadgrams.txt");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+     
         String line;
 
         // Read the quadgram file

@@ -22,7 +22,7 @@ public class CipherTester {
 
     public CipherTester(String ciphertext, int rounds) {
         try {
-            this.quadgramAnalyzer = new QuadgramAnalyzer("english_quadgrams.txt");
+            this.quadgramAnalyzer = new QuadgramAnalyzer("/english_quadgrams.txt");
             this.initialKeyGenerator = new FrequencyAnalysisKeyGenerator(ciphertext);
         } catch (IOException e) {
             e.printStackTrace();
