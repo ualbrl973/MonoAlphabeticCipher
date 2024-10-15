@@ -8,13 +8,13 @@ public class KeyAdjuster {
     private static final Set<String> COMMON_TRIGRAMS = new HashSet<>(Set.of("THE", "AND", "ING", "ENT", "ION", "HER", "FOR", "THA"));
     private static final Set<String> COMMON_WORDS = new HashSet<>(Set.of("THE", "BE", "TO", "OF", "AND", "A", "IN", "THAT", "IT", "IS"));
 
-    // Método para calcular el puntaje de coincidencia basado en bigramas, trigramas y palabras
+    // Method to calculate the match score based on bigrams, trigrams, and words
     public static double calculatePatternMatchScore(String plaintext) {
         int bigramMatches = countMatches(plaintext, 2, COMMON_BIGRAMS);
         int trigramMatches = countMatches(plaintext, 3, COMMON_TRIGRAMS);
         int wordMatches = countWordMatches(plaintext, COMMON_WORDS);
 
-        // Ajuste del puntaje
+        // Adjust the score
         return bigramMatches * 1.0 + trigramMatches * 1.5 + wordMatches * 2.0;
     }
 
@@ -42,7 +42,7 @@ public class KeyAdjuster {
         return matches;
     }
 
-    // Método para ajustar la clave de descifrado
+    // Method to adjust the decryption key
     public static char[] adjustKey(String ciphertext, char[] decryptionKey) {
         char[] currentKey = decryptionKey.clone();
         double currentScore = calculatePatternMatchScore(decrypt(ciphertext, currentKey));
@@ -51,21 +51,21 @@ public class KeyAdjuster {
         do {
             improved = false;
 
-            // Probar intercambios de cada par de letras
+            // Try swapping each pair of letters
             for (int i = 0; i < currentKey.length; i++) {
                 for (int j = i + 1; j < currentKey.length; j++) {
 
-                    // Crear una nueva clave intercambiando dos letras
+                    // Create a new key by swapping two letters
                     char[] newKey = currentKey.clone();
                     char temp = newKey[i];
                     newKey[i] = newKey[j];
                     newKey[j] = temp;
 
-                    // Calcular el nuevo puntaje para la clave modificada
+                    // Calculate the new score for the modified key
                     String newPlaintext = decrypt(ciphertext, newKey);
                     double newScore = calculatePatternMatchScore(newPlaintext);
 
-                    // Si el nuevo puntaje es mejor, actualizar la clave y continuar
+                    // If the new score is better, update the key and continue
                     if (newScore > currentScore) {
                         currentScore = newScore;
                         currentKey = newKey.clone();
@@ -78,12 +78,12 @@ public class KeyAdjuster {
         return currentKey;
     }
 
-    // Función para descifrar un texto utilizando una clave dada
+    // Function to decrypt a text using a given key
     private static String decrypt(String ciphertext, char[] cipherKey) {
         StringBuilder plaintext = new StringBuilder();
         for (char c : ciphertext.toCharArray()) {
             int index = c - 'A';
-            plaintext.append((char) (cipherKey[index] - 'A' + 'a'));  // Convertir a minúsculas
+            plaintext.append((char) (cipherKey[index] - 'A' + 'a'));  // Convert to lowercase
         }
         return plaintext.toString();
     }

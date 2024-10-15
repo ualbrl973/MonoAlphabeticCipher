@@ -9,20 +9,20 @@ public class FrequencyAnalysisKeyGenerator {
     public Map<Character, Integer> cipherFrequency;
 
     public FrequencyAnalysisKeyGenerator(String ciphertext) {
-        // Análisis de frecuencias en el texto cifrado
+        // Frequency analysis on the ciphertext
         cipherFrequency = FrequencyAnalyzer.analyzeFrequency(ciphertext);
         System.out.println(cipherFrequency);
 
-        // Ordenamos las frecuencias del texto cifrado
+        // Sort the frequencies of the ciphertext
         List<Map.Entry<Character, Integer>> sortedCipherFrequency = FrequencyAnalyzer.sortFrequency(cipherFrequency);
 
-        // Generamos la clave de descifrado basada en las frecuencias
+        // Generate the decryption key based on the frequencies
         this.cipherKey = FrequencyAnalyzer.createDecryptionKey(sortedCipherFrequency);
         
-        // Ajustar la clave para mejorar el descifrado
+        // Adjust the key to improve decryption
         this.cipherKey = KeyAdjuster.adjustKey(ciphertext, cipherKey);
         
-        System.out.println("Clave inicial generada en base al análisis de frecuencias.");
+        System.out.println("Initial key generated based on frequency analysis.");
     }
 
     public char[] getCypherKey() {

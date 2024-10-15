@@ -8,12 +8,12 @@ public class CipherTester {
     private QuadgramAnalyzer quadgramAnalyzer;
     private int rounds;
     
-    // Atributos para almacenar los mejores resultados
+    // Attributes to store the best results
     private double bestOverallFitness;
     private CipherKey bestOverallCipherKey;
     private String bestOverallPlaintext;
 
-    // Objetos creados una sola vez
+    // Objects created only once
     private FrequencyAnalysisKeyGenerator initialKeyGenerator;
     
     public FrequencyAnalysisKeyGenerator getInitialKeyGenerator() {
@@ -29,16 +29,16 @@ public class CipherTester {
         }
         this.ciphertext = ciphertext;
         this.rounds = rounds;
-        this.bestOverallFitness = Double.NEGATIVE_INFINITY; // Inicializa el mejor fitness
+        this.bestOverallFitness = Double.NEGATIVE_INFINITY; // Initialize best fitness
     }
 
-    // Método principal que ejecuta todas las pruebas
+    // Main method that runs all tests
     public CipherKey executeTests() {
         for (int test = 0; test < rounds; test++) {
             System.out.println("Executing round " + (test + 1) + "...");
             CipherKey bestCipherKey = findBestCipherKey();
 
-            // Actualizar la mejor clave global si es necesario
+            // Update the global best key if necessary
             updateBestResults(bestCipherKey);
         }
 
@@ -46,13 +46,13 @@ public class CipherTester {
         return bestOverallCipherKey;
     }
 
-    //For application progress bar purpose
+    // For application progress bar purpose
     public CipherKey executeTests(java.util.function.Consumer<Integer> progressConsumer) {
         for (int test = 0; test < rounds; test++) {
             System.out.println("Executing round " + (test + 1) + "...");
             CipherKey bestCipherKey = findBestCipherKey();
 
-            // Actualizar la mejor clave global si es necesario
+            // Update the global best key if necessary
             updateBestResults(bestCipherKey);
 
             // Call the consumer to update progress
@@ -64,7 +64,7 @@ public class CipherTester {
     }
 
     
-    // Método para encontrar la mejor clave en una ronda
+    // Method to find the best key in a round
     private CipherKey findBestCipherKey() {
         char[] initialKey = initialKeyGenerator.getCypherKey();
         CipherKey cipherKey = new CipherKey(initialKey);
@@ -72,24 +72,25 @@ public class CipherTester {
         double bestFitness = quadgramAnalyzer.calculateFitness(cipherKey.decrypt(ciphertext));
         CipherKey bestCipherKey = new CipherKey(cipherKey.getKey());
 
-        // Proceso de búsqueda de mejor clave
+        // Process of searching for the best key
         for (int iteration = 0; iteration < 10000; iteration++) {
-            // Generar una nueva clave realizando un pequeño cambio
+            // Generate a new key by making a small change
             cipherKey.swapRandomCharacters();
 
-            // Calcular la aptitud de la nueva clave
+            // Calculate the fitness of the new key
             String newPlaintext = cipherKey.decrypt(ciphertext);
             double newFitness = quadgramAnalyzer.calculateFitness(newPlaintext);
 
-            // Si la nueva clave es mejor, actualizar la clave y aptitud
+            // If the new key is better, update the key and fitness
             if (newFitness > bestFitness) {
                 bestFitness = newFitness;
                 bestCipherKey.setKey(cipherKey.getKey());
-                //System.out.println("Iteration: " + iteration + " | Fitness: " + bestFitness +  " | Best plaintext: " + newPlaintext + " | Key: " + bestCipherKey);
+                //System.out.println("Iteration: " + iteration + " | Fitness: " + bestFitness 
+                	//	+  " | Best plaintext: " + newPlaintext + " | Key: " + bestCipherKey);
             }
 
          
-            // Restablecer la clave a la mejor encontada
+            // Reset the key to the best found
             cipherKey.setKey(bestCipherKey.getKey());
         }
         System.out.println("Results of round:"  + " | Fitness: " + bestFitness + " | Key: " + bestCipherKey);
@@ -97,7 +98,7 @@ public class CipherTester {
         return bestCipherKey;
     }
 
-    // Método para actualizar los mejores resultados
+    // Method to update the best results
     private void updateBestResults(CipherKey bestCipherKey) {
         double currentFitness = quadgramAnalyzer.calculateFitness(bestCipherKey.decrypt(ciphertext));
         if (currentFitness > bestOverallFitness) {
@@ -107,7 +108,7 @@ public class CipherTester {
         }
     }
 
-    // Getters para acceder a los resultados
+    // Getters to access the results
     public double getBestOverallFitness() {
         return bestOverallFitness;
     }

@@ -15,7 +15,7 @@ public class QuadgramAnalyzer {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
 
-        // Leer el archivo de cuadrigramas
+        // Read the quadgram file
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(" ");
             quadgramFrequencies.put(parts[0], Integer.parseInt(parts[1]));
@@ -24,7 +24,7 @@ public class QuadgramAnalyzer {
         this.totalQuadgrams = quadgramFrequencies.values().stream().mapToLong(Integer::longValue).sum();
     }
 
-    // Calcular la aptitud de un texto basado en cuadrigramas
+    // Calculate the fitness of a text based on quadgrams
     public double calculateFitness(String text) {
         double fitness = 0.0;
         for (int i = 0; i < text.length() - 3; i++) {

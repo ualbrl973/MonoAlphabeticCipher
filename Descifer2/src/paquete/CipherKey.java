@@ -9,7 +9,7 @@ public class CipherKey {
         this.key = initialKey.clone();
     }
 
-    // Intercambiar aleatoriamente dos caracteres en la clave
+    // Swap two characters in the key randomly
     public void swapRandomCharacters() {
         Random random = new Random();
         int index1 = random.nextInt(26);
@@ -19,12 +19,12 @@ public class CipherKey {
         key[index2] = temp;
     }
 
-    // Descifrar un texto utilizando la clave
+    // Decrypt a text using the key
     public String decrypt(String ciphertext) {
         StringBuilder plaintext = new StringBuilder();
         for (char c : ciphertext.toCharArray()) {
             int index = c - 'A';
-            plaintext.append((char) (key[index] - 'A' + 'a'));  // Convertir a minúsculas
+            plaintext.append((char) (key[index] - 'A' + 'a'));  // Convert to lowercase
         }
         return plaintext.toString();
     }
